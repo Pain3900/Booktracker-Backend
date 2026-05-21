@@ -2,12 +2,18 @@ package com.BookTracker.back.service;
 
 import com.BookTracker.back.dto.BookRequest;
 import com.BookTracker.back.dto.BookResponse;
+import com.BookTracker.back.dto.ProgressRequest;
+import com.BookTracker.back.dto.ProgressResponse;
 import com.BookTracker.back.model.entity.Book;
+import com.BookTracker.back.model.entity.ReadingProgress;
+import com.BookTracker.back.model.entity.Shelf;
 import com.BookTracker.back.model.entity.User;
 import com.BookTracker.back.repository.BookRepository;
+import com.BookTracker.back.repository.ReadingProgressRepository;
 import com.BookTracker.back.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -19,6 +25,8 @@ public class BookService {
     private final BookRepository bookRepository;
     private final UserRepository userRepository;
 
+    private final ReadingProgressRepository readingProgressRepository;
+
     public BookResponse createBook(BookRequest request, String userEmail) {
         User user = userRepository.findByEmail(userEmail)
                 .orElseThrow(() -> new RuntimeException("Пользователь не найден"));
@@ -27,6 +35,11 @@ public class BookService {
         book.setTitle(request.getTitle());
         book.setAuthor(request.getAuthor());
         book.setDescription(request.getDescription());
+
+        if (request.getPageCount() != null) {
+            book.setPageCount(request.getPageCount());
+        }
+
         book.setUser(user);
 
         Book savedBook = bookRepository.save(book);
@@ -45,7 +58,6 @@ public class BookService {
         Book book = bookRepository.findById(bookId)
                 .orElseThrow(() -> new RuntimeException("Книга не найдена"));
 
-        // Проверка: принадлежит ли книга этому пользователю?
         if (!book.getUser().getEmail().equals(userEmail)) {
             throw new RuntimeException("Нет прав для удаления этой книги");
         }
@@ -53,13 +65,46 @@ public class BookService {
         bookRepository.delete(book);
     }
 
-    // Вспомогательный метод для конвертации Entity в DTO
+    @Transactional
+    public ProgressResponse saveProgress(Long bookId, ProgressRequest request) {
+        Book book = bookRepository.findById(bookId)
+                .orElseThrow(() -> new RuntimeException("Книга не найдена"));
+
+        book.setCurrentPage(request.getPage());
+
+        if (book.getPageCount() != null && book.getCurrentPage() >= book.getPageCount()) {
+            book.setShelf(Shelf.FINISHED);
+        } else {
+            book.setShelf(Shelf.READING);
+        }
+        bookRepository.save(book);
+
+        ReadingProgress progress = ReadingProgress.builder()
+                .book(book)
+                .page(request.getPage())
+                .build();
+
+        ReadingProgress savedProgress = readingProgressRepository.save(progress);
+
+        return ProgressResponse.builder()
+                .id(savedProgress.getId())
+                .bookId(book.getId())
+                .bookTitle(book.getTitle())
+                .pageCount(book.getPageCount())
+                .page(savedProgress.getPage())
+                .recordedAt(savedProgress.getRecordedAt())
+                .build();
+    }
+
     private BookResponse mapToResponse(Book book) {
         return BookResponse.builder()
                 .id(book.getId())
                 .title(book.getTitle())
                 .author(book.getAuthor())
                 .description(book.getDescription())
+                .pageCount(book.getPageCount())
+                .currentPage(book.getCurrentPage())
+                .shelf(book.getShelf() != null ? book.getShelf().name() : null)
                 .createdAt(book.getCreatedAt())
                 .build();
     }

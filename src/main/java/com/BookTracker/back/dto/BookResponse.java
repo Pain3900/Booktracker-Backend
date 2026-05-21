@@ -11,5 +11,8 @@ public class BookResponse {
     private String title;
     private String author;
     private String description;
+    private Integer pageCount;
+    private Integer currentPage;
+    private String shelf;
     private LocalDateTime createdAt;
 }

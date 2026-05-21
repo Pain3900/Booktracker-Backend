@@ -1,9 +1,10 @@
 package com.BookTracker.back.model.entity;
 
 import jakarta.persistence.*;
-import lombok.Getter;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
@@ -12,9 +13,10 @@ import java.util.List;
 
 @Entity
 @Table(name = "books")
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class Book {
 
     @Id
@@ -29,13 +31,23 @@ public class Book {
     @Column(columnDefinition = "TEXT")
     private String description;
 
-    // Связь с пользователем. FetchType.LAZY — хорошая практика, чтобы не тянуть юзера из БД каждый раз, когда мы запрашиваем книгу.
+    // --- НОВЫЕ ПОЛЯ ДЛЯ ФРОНТЕНДА ---
+    private Integer pageCount;
+
+    @Builder.Default
+    private Integer currentPage = 0;
+
+    @Enumerated(EnumType.STRING)
+    @Builder.Default
+    private Shelf shelf = Shelf.PLAN;
+
+    // --- ВАШИ ОРИГИНАЛЬНЫЕ СВЯЗИ ---
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    // Одна книга — много карточек. Удаляем книгу -> удаляются карточки.
     @OneToMany(mappedBy = "book", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
     private List<DictionaryCard> cards = new ArrayList<>();
 
     @CreationTimestamp

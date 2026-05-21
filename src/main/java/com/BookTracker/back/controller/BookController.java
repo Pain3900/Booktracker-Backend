@@ -2,6 +2,8 @@ package com.BookTracker.back.controller;
 
 import com.BookTracker.back.dto.BookRequest;
 import com.BookTracker.back.dto.BookResponse;
+import com.BookTracker.back.dto.ProgressRequest;
+import com.BookTracker.back.dto.ProgressResponse;
 import com.BookTracker.back.service.BookService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -31,5 +33,14 @@ public class BookController {
     public ResponseEntity<Void> deleteBook(@PathVariable Long id, Principal principal) {
         bookService.deleteBook(id, principal.getName());
         return ResponseEntity.ok().build();
+    }
+
+
+    @PostMapping("/{id}/progress")
+    public ResponseEntity<ProgressResponse> saveProgress(
+            @PathVariable Long id,
+            @RequestBody ProgressRequest request
+    ) {
+        return ResponseEntity.ok(bookService.saveProgress(id, request));
     }
 }
