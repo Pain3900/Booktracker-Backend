@@ -8,9 +8,10 @@ import com.BookTracker.back.service.BookService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
+import org.springframework.web.bind.annotation.PutMapping;
 import java.security.Principal;
 import java.util.List;
+import org.springframework.security.core.Authentication;
 
 @RestController
 @RequestMapping("/api/v1/books")
@@ -42,5 +43,17 @@ public class BookController {
             @RequestBody ProgressRequest request
     ) {
         return ResponseEntity.ok(bookService.saveProgress(id, request));
+    }
+
+
+    // Внутри BookController.java
+    @PutMapping("/{id}") // Итоговый путь будет /api/v1/books/{id}
+    public ResponseEntity<BookResponse> updateBook(
+            @PathVariable Long id,
+            @RequestBody BookRequest request,
+            Authentication authentication) {
+
+        String userEmail = authentication.getName();
+        return ResponseEntity.ok(bookService.updateBook(id, request, userEmail));
     }
 }

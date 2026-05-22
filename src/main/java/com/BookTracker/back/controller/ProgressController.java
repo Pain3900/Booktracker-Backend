@@ -17,7 +17,6 @@ public class ProgressController {
 
     private final ProgressService progressService;
 
-    // Сохранить прогресс для конкретной книги
     @PostMapping("/books/{bookId}/progress")
     public ResponseEntity<ProgressResponse> recordProgress(
             @PathVariable Long bookId,

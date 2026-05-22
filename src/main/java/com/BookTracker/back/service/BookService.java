@@ -49,9 +49,40 @@ public class BookService {
         }
 
         book.setUser(user);
-
         Book savedBook = bookRepository.save(book);
         return mapToResponse(savedBook);
+    }
+    public BookResponse updateBook(Long bookId, BookRequest request, String userEmail) {
+        // 1. Находим книгу
+        Book book = bookRepository.findById(bookId)
+                .orElseThrow(() -> new RuntimeException("Книга не найдена"));
+
+        // 2. Проверяем права
+        if (!book.getUser().getEmail().equals(userEmail)) {
+            throw new RuntimeException("Нет прав для редактирования этой книги");
+        }
+
+        // 3. Обновляем основные поля
+        book.setTitle(request.getTitle());
+        book.setAuthor(request.getAuthor());
+        book.setDescription(request.getDescription());
+
+        if (request.getPageCount() != null) {
+            book.setPageCount(request.getPageCount());
+        }
+
+
+        if (request.getShelf() != null && !request.getShelf().trim().isEmpty()) {
+            try {
+                book.setShelf(Shelf.valueOf(request.getShelf().toUpperCase()));
+            } catch (IllegalArgumentException e) {
+                // Игнорируем неверный статус
+            }
+        }
+
+        // 5. Сохраняем и возвращаем
+        Book updatedBook = bookRepository.save(book);
+        return mapToResponse(updatedBook);
     }
 
     public List<BookResponse> getAllUserBooks(String userEmail) {
