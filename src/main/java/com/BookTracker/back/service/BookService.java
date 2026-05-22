@@ -9,7 +9,7 @@ import com.BookTracker.back.model.entity.ReadingProgress;
 import com.BookTracker.back.model.entity.Shelf;
 import com.BookTracker.back.model.entity.User;
 import com.BookTracker.back.repository.BookRepository;
-import com.BookTracker.back.repository.ReadingProgressRepository;
+import com.BookTracker.back.repository.ProgressRepository;
 import com.BookTracker.back.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -24,8 +24,7 @@ public class BookService {
 
     private final BookRepository bookRepository;
     private final UserRepository userRepository;
-
-    private final ReadingProgressRepository readingProgressRepository;
+    private final ProgressRepository readingProgressRepository;
 
     public BookResponse createBook(BookRequest request, String userEmail) {
         User user = userRepository.findByEmail(userEmail)
@@ -38,6 +37,15 @@ public class BookService {
 
         if (request.getPageCount() != null) {
             book.setPageCount(request.getPageCount());
+        }
+        if (request.getShelf() != null && !request.getShelf().trim().isEmpty()) {
+            try {
+                book.setShelf(Shelf.valueOf(request.getShelf().toUpperCase()));
+            } catch (IllegalArgumentException e) {
+                book.setShelf(Shelf.PLAN);
+            }
+        } else {
+            book.setShelf(Shelf.PLAN);
         }
 
         book.setUser(user);

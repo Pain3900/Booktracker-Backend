@@ -1,5 +1,6 @@
 package com.BookTracker.back.dto;
 
+import com.BookTracker.back.model.entity.ReadingProgress;
 import lombok.Builder;
 import lombok.Data;
 import java.time.LocalDateTime;

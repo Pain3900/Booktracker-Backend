@@ -8,4 +8,5 @@ public class BookRequest {
     private String author;
     private String description;
     private Integer pageCount;
+    private String shelf;
 }
