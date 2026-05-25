@@ -37,17 +37,7 @@ public class BookController {
     }
 
 
-    @PostMapping("/{id}/progress")
-    public ResponseEntity<ProgressResponse> saveProgress(
-            @PathVariable Long id,
-            @RequestBody ProgressRequest request
-    ) {
-        return ResponseEntity.ok(bookService.saveProgress(id, request));
-    }
-
-
-    // Внутри BookController.java
-    @PutMapping("/{id}") // Итоговый путь будет /api/v1/books/{id}
+    @PutMapping("/{id}")
     public ResponseEntity<BookResponse> updateBook(
             @PathVariable Long id,
             @RequestBody BookRequest request,

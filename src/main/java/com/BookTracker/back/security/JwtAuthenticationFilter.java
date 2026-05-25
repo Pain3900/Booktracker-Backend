@@ -30,40 +30,40 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             @NonNull FilterChain filterChain
     ) throws ServletException, IOException {
 
+        // Логирование для отладки
+        String header = request.getHeader("Authorization");
+        System.out.println("DEBUG: Пришел запрос на " + request.getRequestURI());
+        System.out.println("DEBUG: Заголовок Authorization: " + (header != null ? header.substring(0, Math.min(header.length(), 20)) + "..." : "ПУСТО!"));
+
         final String authHeader = request.getHeader("Authorization");
         final String jwt;
         final String userEmail;
 
-        // Если заголовка нет или он не начинается с "Bearer ", пропускаем фильтр (запрос будет отклонен позже)
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             filterChain.doFilter(request, response);
             return;
         }
 
-        // Вырезаем сам токен (убираем слово "Bearer ")
         jwt = authHeader.substring(7);
         userEmail = jwtService.extractUsername(jwt);
 
-        // Если email есть в токене, а пользователь еще не аутентифицирован в контексте Spring
         if (userEmail != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             UserDetails userDetails = this.userDetailsService.loadUserByUsername(userEmail);
 
-            // Проверяем токен на валидность
             if (jwtService.isTokenValid(jwt, userDetails)) {
-                // Создаем объект аутентификации
                 UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
                         userDetails,
                         null,
                         userDetails.getAuthorities()
                 );
                 authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-
-                // Сохраняем пользователя в контекст безопасности (он "вошел в систему" для этого запроса)
                 SecurityContextHolder.getContext().setAuthentication(authToken);
+                System.out.println("DEBUG: Успешно установили аутентификацию для " + userEmail);
+            } else {
+                System.out.println("DEBUG: Токен НЕ валиден для " + userEmail);
             }
         }
 
-        // Передаем запрос дальше по цепочке
         filterChain.doFilter(request, response);
     }
 }

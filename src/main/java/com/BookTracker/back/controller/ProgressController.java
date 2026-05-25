@@ -23,7 +23,10 @@ public class ProgressController {
             @RequestBody ProgressRequest request,
             Authentication authentication) {
 
+        System.out.println("DEBUG: Пришел запрос на прогресс для книги " + bookId + ", страница=" + request.getPage());
+
         String userEmail = authentication.getName();
+
         ProgressResponse response = progressService.recordProgress(bookId, request, userEmail);
         return ResponseEntity.ok(response);
     }
