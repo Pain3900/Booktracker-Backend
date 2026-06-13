@@ -1,5 +1,5 @@
 # BookTracker Backend
-
+ **Looking for the client application?** Check out the [BookTracker Frontend Repository](https://github.com/keo0ke/BookTracker) developed in collaboration with [keo0ke](https://github.com/keo0ke).
 [![Java Version](https://img.shields.io/badge/Java-17-orange?style=for-the-badge&logo=openjdk)](https://openjdk.org/)
 [![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.x-brightgreen?style=for-the-badge&logo=springboot)](https://spring.io/projects/spring-boot)
 [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-Passed-blue?style=for-the-badge&logo=postgresql)](https://www.postgresql.org/)
