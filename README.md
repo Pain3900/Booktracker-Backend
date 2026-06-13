@@ -1,10 +1,11 @@
 # BookTracker Backend
- **Looking for the client application?** Check out the [BookTracker Frontend Repository](https://github.com/keo0ke/BookTracker) developed in collaboration with [keo0ke](https://github.com/keo0ke).
+
 [![Java Version](https://img.shields.io/badge/Java-17-orange?style=for-the-badge&logo=openjdk)](https://openjdk.org/)
 [![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.x-brightgreen?style=for-the-badge&logo=springboot)](https://spring.io/projects/spring-boot)
 [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-Passed-blue?style=for-the-badge&logo=postgresql)](https://www.postgresql.org/)
 [![License](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](https://opensource.org/licenses/MIT)
 
+**Looking for the client application?** Check out the [BookTracker Frontend Repository](https://github.com/keo0ke/BookTracker) developed in collaboration with [keo0ke](https://github.com/keo0ke).
 A robust, production-ready RESTful API engineered with **Spring Boot 3.x** and **Java 17** to serve as the backend engine for library management and reading progression tracking. This service handles decoupled data layers, structured validation via DTOs, and deep data persistence via PostgreSQL. It is perfectly tailored to integrate with mobile clients (Android/Kotlin with Retrofit) or modern frontend web dashboards.
 
 ---
